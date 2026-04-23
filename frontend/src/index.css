@@ -1,0 +1,92 @@
+/* ══════════════════════════════════════════════════════════════════
+   ResumeForge – Global Design System
+   ══════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Brand Colors ─────────────────────────── */
+  --ink:        #0F1117;
+  --ink-2:      #1C2140;
+  --ink-3:      #2D3561;
+  --blue:       #2E76B5;
+  --blue-light: #4A9FD4;
+  --blue-muted: #EBF4FB;
+  --green:      #22C55E;
+  --red:        #EF4444;
+
+  /* ── Neutrals ─────────────────────────────── */
+  --gray-50:  #F8F9FB;
+  --gray-100: #F1F2F6;
+  --gray-200: #E4E6EE;
+  --gray-300: #CDD1E0;
+  --gray-400: #9BA3BF;
+  --gray-500: #6B748F;
+  --gray-600: #4B5268;
+  --gray-700: #363C54;
+  --white:    #FFFFFF;
+
+  /* ── Typography ───────────────────────────── */
+  --font-ui:     'DM Sans', system-ui, sans-serif;
+  --font-resume: 'Lora', Georgia, serif;
+  --font-mono:   'Fira Code', monospace;
+
+  /* ── Spacing ──────────────────────────────── */
+  --space-1: 4px;  --space-2: 8px;   --space-3: 12px;
+  --space-4: 16px; --space-5: 20px;  --space-6: 24px;
+  --space-8: 32px; --space-10: 40px; --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Radii ────────────────────────────────── */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 24px; --r-full: 9999px;
+
+  /* ── Shadows ──────────────────────────────── */
+  --shadow-sm: 0 1px 3px rgba(15,17,23,.08), 0 1px 2px rgba(15,17,23,.06);
+  --shadow-md: 0 4px 12px rgba(15,17,23,.10), 0 2px 6px rgba(15,17,23,.06);
+  --shadow-lg: 0 12px 40px rgba(15,17,23,.14), 0 4px 12px rgba(15,17,23,.08);
+  --shadow-paper: 0 2px 8px rgba(15,17,23,.12), 0 8px 32px rgba(15,17,23,.08);
+
+  /* ── Transitions ─────────────────────────── */
+  --ease: cubic-bezier(.4,0,.2,1);
+  --dur: 180ms;
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--gray-50);
+  color: var(--ink);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 6px; height: 6px; }
+::-webkit-scrollbar-track        { background: transparent; }
+::-webkit-scrollbar-thumb        { background: var(--gray-300); border-radius: var(--r-full); }
+::-webkit-scrollbar-thumb:hover  { background: var(--gray-400); }
+
+/* ── Focus ─────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ── Selection ─────────────────────────────────────────────────── */
+::selection { background: var(--blue-muted); color: var(--blue); }
+
+/* ── Utility classes ───────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── Print styles ─────────────────────────────────────────────── */
+@media print {
+  body { background: white; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+}
