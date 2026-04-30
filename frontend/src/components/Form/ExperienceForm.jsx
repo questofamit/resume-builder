@@ -19,7 +19,14 @@ export default function ExperienceForm() {
   const { resume, setExperience } = useResume();
   const items = resume.experience;
 
-  const add    = () => setExperience([...items, blank()]);
+  const add = () => {
+  setExperience([...items, blank()]);
+  setTimeout(() => {
+    const el = document.querySelector('[data-form]');
+    if (el) el.scrollTop = el.scrollHeight;
+  }, 150);
+
+};
   const remove = (id) => setExperience(items.filter((e) => e.id !== id));
   const update = (id, field, value) =>
     setExperience(items.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
