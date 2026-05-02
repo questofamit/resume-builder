@@ -10,7 +10,7 @@ export function useDownload() {
   const [loading, setLoading] = useState({ pdf: false, docx: false });
   const [error,   setError  ] = useState(null);
 
-  const download = useCallback(async (resumeData, format) => {
+  const download = useCallback(async (resumeData, format, template = "modern") => {
     setLoading((prev) => ({ ...prev, [format]: true }));
     setError(null);
 
@@ -18,7 +18,7 @@ export function useDownload() {
       const res = await fetch(`${API_BASE}/resume/${format}`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(resumeData),
+        body: JSON.stringify({ ...resumeData, template }),
       });
 
       if (!res.ok) {

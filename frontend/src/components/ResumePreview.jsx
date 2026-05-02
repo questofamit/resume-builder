@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { useResume, TEMPLATES } from "../context/ResumeContext";
 import ModernTemplate  from "./Templates/ModernTemplate";
 import ClassicTemplate from "./Templates/ClassicTemplate";
@@ -14,22 +14,62 @@ const TEMPLATE_MAP = {
 
 export default function ResumePreview({ activeTemplate, onTemplateChange }) {
   const { resume } = useResume();
-  const { downloadPDF, downloadDOCX, loading, error } = useDownload();
+  const { downloadDOCX, loading, error } = useDownload();
   const previewRef = useRef(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const TemplateComp = TEMPLATE_MAP[activeTemplate] || ModernTemplate;
 
+  // PDF Download — html2canvas + jsPDF
+  const handlePDF = useCallback(async () => {
+    if (!previewRef.current) return;
+    setPdfLoading(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const jsPDF       = (await import("jspdf")).jsPDF;
+
+      const canvas = await html2canvas(previewRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+
+      const imgData  = canvas.toDataURL("image/png");
+      const pdf      = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" });
+      const pageW    = pdf.internal.pageSize.getWidth();
+      const pageH    = pdf.internal.pageSize.getHeight();
+      const imgW     = canvas.width;
+      const imgH     = canvas.height;
+      const ratio    = Math.min(pageW / imgW, pageH / imgH);
+      const finalW   = imgW * ratio;
+      const finalH   = imgH * ratio;
+
+      pdf.addImage(imgData, "PNG", 0, 0, finalW, finalH);
+      pdf.save(`${resume.personal.name || "resume"}_resume.pdf`);
+    } catch (err) {
+      alert("PDF बनाने में error आई: " + err.message);
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [resume.personal.name]);
+
+  // Print
   const handlePrint = useCallback(() => {
     const content = previewRef.current?.innerHTML;
     if (!content) return;
     const win = window.open("", "_blank");
     win.document.write(`<!DOCTYPE html><html><head>
       <title>${resume.personal.name || "Resume"}</title>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
-      <style>* { box-sizing:border-box; margin:0; padding:0; } body { background:white; -webkit-print-color-adjust:exact; } @page { size:letter; margin:0; }</style>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+      <style>
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background:white; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        @page { size: letter; margin: 0; }
+      </style>
       </head><body>${content}</body></html>`);
     win.document.close();
     win.focus();
-    setTimeout(() => { win.print(); win.close(); }, 400);
+    setTimeout(() => { win.print(); win.close(); }, 500);
   }, [resume.personal.name]);
 
   return (
@@ -44,15 +84,15 @@ export default function ResumePreview({ activeTemplate, onTemplateChange }) {
           ))}
         </div>
         <div style={actions}>
-          <Button variant="outline" size="sm" onClick={handlePrint}>��� Print</Button>
-          <Button variant="outline" size="sm" loading={loading.docx} onClick={() => downloadDOCX(resume)}>��� DOCX</Button>
-          <Button variant="blue"    size="sm" loading={loading.pdf}  onClick={() => downloadPDF(resume)}>⬇ PDF</Button>
+          <Button variant="outline" size="sm" onClick={handlePrint}>🖨 Print</Button>
+          <Button variant="outline" size="sm" loading={loading.docx} onClick={() => downloadDOCX(resume)}>📄 DOCX</Button>
+          <Button variant="blue" size="sm" loading={pdfLoading} onClick={handlePDF}>⬇ PDF</Button>
         </div>
       </div>
 
       {error && (
         <div style={errorBanner}>
-          ⚠️ Backend नहीं चल रहा — PDF/DOCX के लिए backend terminal में चालू करो
+          ⚠️ DOCX के लिए backend चालू करो
         </div>
       )}
 
