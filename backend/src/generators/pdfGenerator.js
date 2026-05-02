@@ -92,6 +92,20 @@ function drawWrapped(page, text, x, y, font, size, color, maxWidth, lineHeight =
  * @returns {Buffer} PDF bytes
  */
 async function generatePDF(data) {
+  const template = data.template || "modern";
+
+  // Template के हिसाब से colors बदलो
+  if (template === "classic") {
+    COLORS.accent  = rgb(0.55, 0.0, 0.0);  // deep red
+    COLORS.primary = rgb(0.1,  0.1, 0.1);
+  } else if (template === "minimal") {
+    COLORS.accent  = rgb(0.0,  0.4, 0.8);  // blue
+    COLORS.primary = rgb(0.04, 0.04, 0.04);
+  } else {
+    // modern (default)
+    COLORS.accent  = rgb(0.18, 0.46, 0.71);
+    COLORS.primary = rgb(0.11, 0.13, 0.24);
+  }
   const pdfDoc = await PDFDocument.create();
   pdfDoc.setTitle(`${data.personal.name} - Resume`);
   pdfDoc.setAuthor(data.personal.name);

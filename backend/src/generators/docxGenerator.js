@@ -41,6 +41,19 @@ function para(text, opts = {}) {
 }
 
 async function generateDOCX(data) {
+  const template = data.template || "modern";
+
+  // Template के हिसाब से colors बदलो
+  if (template === "classic") {
+    C.accent  = "8B0000";  // deep red
+    C.primary = "1a1a1a";
+  } else if (template === "minimal") {
+    C.accent  = "0066CC";  // blue
+    C.primary = "0a0a0a";
+  } else {
+    C.accent  = "2E76B5";  // navy blue
+    C.primary = "1C2140";
+  }
   const sections = [];
 
   // Name
